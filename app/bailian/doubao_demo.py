@@ -6,6 +6,7 @@
 import os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatMessagePromptTemplate, ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate
 from langchain_core.messages import HumanMessage, SystemMessage
 
 # 加载环境变量
@@ -59,20 +60,34 @@ class DoubaoDemo:
         
         except Exception as e:
             return f"创意写作失败: {str(e)}"
-    
-    def code_assistant(self, programming_question: str) -> str:
-        """编程助手示例"""
-        try:
-            messages = [
-                SystemMessage(content="你是一个专业的编程助手，擅长Python、JavaScript等多种编程语言。请提供清晰的代码示例和解释。"),
-                HumanMessage(content=programming_question)
-            ]
             
-            response = self.llm.invoke(messages)
-            return response.content
+    def code_assistant(self, question: str, role: str, domain: str) -> str:
+        """生成指定角色和领域的回答"""
+        try:
+            # 构建提示词模板
+            chat_prompt = ChatPromptTemplate.from_messages(
+                [
+                    SystemMessagePromptTemplate.from_template("你是一位{role}专家，擅长回答{domain}领域的问题。请用简洁准确的语言回答。"),
+                    HumanMessagePromptTemplate.from_template("用户问题：{question}")
+                ]
+            )
+            
+            # 格式化提示词（填充变量）
+            formatted_prompt = chat_prompt.format_messages(
+                role=role,
+                domain=domain,
+                question=question
+            )
+            
+            # 流式获取响应并拼接结果
+            response_chunks = []
+            for chunk in self.llm.stream(formatted_prompt):
+                response_chunks.append(chunk.content)
+            
+            return "".join(response_chunks)
         
         except Exception as e:
-            return f"编程助手调用失败: {str(e)}"
+            return f"处理失败：{str(e)}"
     
     def batch_questions(self, questions: list) -> dict:
         """批量问题处理示例"""
@@ -109,32 +124,32 @@ def main():
         doubao = DoubaoDemo()
         
         # 1. 简单对话
-        print("1. 简单对话测试:")
-        response = doubao.simple_chat("你好，请介绍一下你自己。")
-        print(f"回答: {response}\n")
+        # print("1. 简单对话测试:")
+        # response = doubao.simple_chat("你好，请介绍一下你自己。")
+        # print(f"回答: {response}\n")
         
         # 2. 创意写作
-        print("2. 创意写作测试:")
-        story = doubao.creative_writing("未来城市")
-        print(f"创意故事: {story}\n")
+        # print("2. 创意写作测试:")
+        # story = doubao.creative_writing("未来城市")
+        # print(f"创意故事: {story}\n")
         
         # 3. 编程助手
         print("3. 编程助手测试:")
-        code_help = doubao.code_assistant("如何用Python实现一个简单的装饰器？")
+        code_help = doubao.code_assistant("你吃饭了吗？","技术","Python")
         print(f"编程建议: {code_help}\n")
         
         # 4. 批量问题处理
-        print("4. 批量问题处理测试:")
-        questions = [
-            "什么是人工智能？",
-            "Python有哪些优势？",
-            "如何学习机器学习？"
-        ]
+        # print("4. 批量问题处理测试:")
+        # questions = [
+        #     "什么是人工智能？",
+        #     "Python有哪些优势？",
+        #     "如何学习机器学习？"
+        # ]
         
-        batch_results = doubao.batch_questions(questions)
-        for key, result in batch_results.items():
-            print(f"{key}: {result['question']}")
-            print(f"回答: {result['answer']}\n")
+        # batch_results = doubao.batch_questions(questions)
+        # for key, result in batch_results.items():
+        #     print(f"{key}: {result['question']}")
+        #     print(f"回答: {result['answer']}\n")
     
     except Exception as e:
         print(f"演示过程中出现错误: {str(e)}")

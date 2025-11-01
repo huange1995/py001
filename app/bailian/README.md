@@ -5,7 +5,8 @@
 ## 文件说明
 
 - `doubao_demo.py` - 完整的豆包模型调用演示，包含多种使用场景
-- `quick_test.py` - 快速测试脚本，用于验证模型连接
+- `chat_prompt_template_demo.py` - ChatPromptTemplate 详细使用演示，展示6种不同的模板使用方式
+- `prompt_template_quick_test.py` - ChatPromptTemplate 快速测试脚本
 - `README.md` - 本说明文件
 
 ## 使用前准备
@@ -44,23 +45,58 @@ DOUBAO_BASE_URL=https://ark.cn-beijing.volces.com/api/v3
 
 ## 运行演示
 
-### 快速测试
+### ChatPromptTemplate 快速测试
 
-首先运行快速测试来验证配置是否正确：
+首先运行 ChatPromptTemplate 快速测试来验证配置：
 
 ```bash
-python app/bailian/quick_test.py
+python app/bailian/prompt_template_quick_test.py
 ```
 
-### 完整演示
+### ChatPromptTemplate 详细演示
 
-运行完整的演示程序：
+运行完整的 ChatPromptTemplate 使用演示：
+
+```bash
+python app/bailian/chat_prompt_template_demo.py
+```
+
+### 完整功能演示
+
+运行完整的豆包模型演示程序：
 
 ```bash
 python app/bailian/doubao_demo.py
 ```
 
 ## 功能特性
+
+### ChatPromptTemplateDemo 类提供以下演示：
+
+1. **基础模板** (`basic_template_demo`)
+   - 使用 `from_messages` 创建简单模板
+   - 单变量替换演示
+
+2. **高级模板** (`advanced_template_demo`)
+   - 多变量模板使用
+   - 复杂场景参数传递
+
+3. **消息模板** (`message_template_demo`)
+   - SystemMessagePromptTemplate 使用
+   - HumanMessagePromptTemplate 使用
+   - 模板组合演示
+
+4. **流式模板** (`streaming_template_demo`)
+   - 模板与流式处理结合
+   - 实时响应获取
+
+5. **对话模板** (`conversation_template_demo`)
+   - 包含上下文的对话模板
+   - 多轮对话支持
+
+6. **部分模板** (`partial_template_demo`)
+   - 使用 `partial` 预填充变量
+   - 模板复用优化
 
 ### DoubaoDemo 类提供以下功能：
 
